@@ -35,7 +35,7 @@ export class GraphManipulatorModule {
 
 	private onLayoutChange() {
 		this.graphsLeafs = this.app.workspace.getLeavesOfType("graph")
-		this.plugin.eventManager.emit("graphLeafUpdate", this.graphsLeafs)
+		this.onLeafUpdate(this.graphsLeafs)
 	}
 
 	private onLeafUpdate(leaves: WorkspaceLeaf[]) {
