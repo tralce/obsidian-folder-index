@@ -212,6 +212,13 @@ export class MarkdownTextRenderer {
 		} else if (this.plugin.settings.sortIndexFiles === SortBy.ReverseNatural) {
 			fileTree.sort((a, b) => this.naturalSort(b.name, a.name))
 		}
+		if (this.plugin.settings.sortFoldersFirst) {
+			fileTree.sort((a, b) => {
+				if (a instanceof TFolder && b instanceof TFile) return -1
+				if (a instanceof TFile && b instanceof TFolder) return 1
+				return 0
+			})
+		}
 		return fileTree
 	}
 

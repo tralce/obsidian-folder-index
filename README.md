@@ -42,10 +42,12 @@ You can also provide a small config block inside the code block:
 ````
 ```folder-index-content
 depth: 2
+path: Folder/Subfolder
 ```
 ````
 
 `depth` controls how many subfolder levels to include for just this block.
+`path` lets you point the index at another folder relative to the vault root.
 
 #### Frontmatter
 

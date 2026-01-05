@@ -37,6 +37,7 @@ export interface PluginSetting {
 	headlineLimit: number;
 	indexFileUserSpecified: boolean;
 	indexFilename: string;
+	sortFoldersFirst: boolean;
 }
 
 export const DEFAULT_SETTINGS: PluginSetting = {
@@ -61,7 +62,8 @@ export const DEFAULT_SETTINGS: PluginSetting = {
 	recursionLimit: -1,
 	headlineLimit: 6,
 	indexFileUserSpecified: false,
-	indexFilename: "!"
+	indexFilename: "!",
+	sortFoldersFirst: false
 }
 
 export class PluginSettingsTab extends PluginSettingTab {
@@ -323,6 +325,15 @@ export class PluginSettingsTab extends PluginSettingTab {
 						numValue = -1
 					}
 					this.plugin.settings.recursionLimit = numValue
+					await this.plugin.saveSettings()
+				}))
+
+		new Setting(containerEl)
+			.setName("Sort folders first")
+			.setDesc("This will list folders before files when rendering index content")
+			.addToggle(component => component.setValue(this.plugin.settings.sortFoldersFirst)
+				.onChange(async (value) => {
+					this.plugin.settings.sortFoldersFirst = value
 					await this.plugin.saveSettings()
 				}))
 

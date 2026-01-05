@@ -1,4 +1,4 @@
-import {App, MarkdownRenderChild, MarkdownRenderer, TAbstractFile, TFile} from "obsidian";
+import {App, MarkdownRenderChild, MarkdownRenderer, TAbstractFile, TFile, TFolder} from "obsidian";
 import FolderIndexPlugin from "../main";
 import {MarkdownTextRenderer} from "../types/MarkdownTextRenderer";
 
@@ -46,19 +46,25 @@ export class IndexContentProcessorModule extends MarkdownRenderChild {
 
 	private async render() {
 		this.container.empty()
-		const folder: TAbstractFile | null = this.app.vault.getAbstractFileByPath(this.filePath)
-		if (folder instanceof TFile) {
-			const files = folder.parent?.children ?? []
-			const config = this.parseBlockConfig(this.blockSource)
-			const renderer = new MarkdownTextRenderer(this.plugin, this.app, {
-				recursionLimit: config.depth
-			})
-			await MarkdownRenderer.renderMarkdown(renderer.buildMarkdownText(files), this.container, this.filePath, this)
+		const config = this.parseBlockConfig(this.blockSource)
+		const targetPath = config.path ?? this.filePath
+		const target: TAbstractFile | null = this.app.vault.getAbstractFileByPath(targetPath)
+		if (!target) {
+			return
 		}
+		const files = target instanceof TFile
+			? target.parent?.children ?? []
+			: target instanceof TFolder
+				? target.children
+				: []
+		const renderer = new MarkdownTextRenderer(this.plugin, this.app, {
+			recursionLimit: config.depth
+		})
+		await MarkdownRenderer.renderMarkdown(renderer.buildMarkdownText(files), this.container, this.filePath, this)
 	}
 
-	private parseBlockConfig(source: string): { depth?: number } {
-		const config: { depth?: number } = {}
+	private parseBlockConfig(source: string): { depth?: number; path?: string } {
+		const config: { depth?: number; path?: string } = {}
 		const lines = source.split(/\r?\n/)
 		for (const line of lines) {
 			const trimmed = line.trim()
@@ -76,6 +82,9 @@ export class IndexContentProcessorModule extends MarkdownRenderChild {
 				if (!Number.isNaN(parsed)) {
 					config.depth = parsed < -1 ? -1 : parsed
 				}
+			}
+			if (key === "path") {
+				config.path = value
 			}
 		}
 		return config
