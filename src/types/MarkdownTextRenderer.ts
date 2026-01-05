@@ -11,9 +11,16 @@ type HeaderWrapper = {
 }
 
 export class MarkdownTextRenderer {
-	constructor(private plugin: FolderIndexPlugin, private app: App) {
+	private readonly recursionLimitOverride?: number;
+
+	constructor(
+		private plugin: FolderIndexPlugin,
+		private app: App,
+		overrides: { recursionLimit?: number } = {}
+	) {
 		this.plugin = plugin
 		this.app = app
+		this.recursionLimitOverride = overrides.recursionLimit
 	}
 
 	public buildMarkdownText(filesInFolder: TAbstractFile[]): string {
@@ -39,7 +46,8 @@ export class MarkdownTextRenderer {
 				} else {
 					markdownText += this.buildMarkdownLinkString(file.name, null, indentLevel, true)
 				}
-				if (this.plugin.settings.recursionLimit === -1 || indentLevel < this.plugin.settings.recursionLimit) {
+				const recursionLimit = this.getRecursionLimit()
+				if (recursionLimit === -1 || indentLevel < recursionLimit) {
 					markdownText += this.buildStructureMarkdownText(this.buildFileTree(children), indentLevel + 1)
 				}
 			}
@@ -238,5 +246,9 @@ export class MarkdownTextRenderer {
 			indentText += "\t"
 		}
 		return indentText
+	}
+
+	private getRecursionLimit(): number {
+		return this.recursionLimitOverride ?? this.plugin.settings.recursionLimit
 	}
 }

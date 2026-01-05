@@ -37,6 +37,16 @@ You can also use the ``folder-index-content`` Block processor directly like this
 
 to include the content of the folder index in any note you want
 
+You can also provide a small config block inside the code block:
+
+````
+```folder-index-content
+depth: 2
+```
+````
+
+`depth` controls how many subfolder levels to include for just this block.
+
 #### Frontmatter
 
 | Key   | Description                                       |
