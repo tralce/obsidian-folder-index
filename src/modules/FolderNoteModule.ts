@@ -39,22 +39,37 @@ export class FolderNoteModule {
 
 		// Compatibility with https://github.com/ozntel/file-tree-alternative
 		if (activePlugins.has("file-tree-alternative")) {
-			if (target.classList.contains("oz-folder-name")) {
-				return (target.parentElement?.parentElement?.parentElement) ?? null
+			const nameTarget = target.closest(".oz-folder-name")
+			if (nameTarget) {
+				return (nameTarget.parentElement?.parentElement?.parentElement) ?? null
 			}
-			if (target.classList.contains("oz-folder-block")) {
-				return (target.parentElement?.parentElement) ?? null
+			const blockTarget = target.closest(".oz-folder-block")
+			if (blockTarget) {
+				return (blockTarget.parentElement?.parentElement) ?? null
 			}
 		}
 
 		// We only want to handle clicks on the folders in the file explorer
-		if (target.classList.contains("nav-folder-title"))
-			return target
+		const folderTitle = target.closest(".nav-folder-title")
+		if (folderTitle) {
+			return folderTitle as HTMLElement
+		}
 		// If the user clicked on the content of the folder, we need to get the parent element
-		if (target.classList.contains("nav-folder-title-content")) {
-			return target.parentElement
+		const folderTitleContent = target.closest(".nav-folder-title-content")
+		if (folderTitleContent) {
+			return folderTitleContent.parentElement
 		}
 		return null
+	}
+
+	private isFolderNameClick(target: HTMLElement): boolean {
+		if (target.closest(".nav-folder-title-content")) {
+			return true
+		}
+		if (target.closest(".oz-folder-name")) {
+			return true
+		}
+		return false
 	}
 
 	private indexFilePath(path: string): string {
@@ -70,6 +85,12 @@ export class FolderNoteModule {
 		const target = this.getTargetFromEvent(event)
 		if (target == null)
 			return
+		if (!(event.target instanceof HTMLElement)) {
+			return
+		}
+		if (!this.isFolderNameClick(event.target)) {
+			return
+		}
 
 		// Get the path of the clicked folder
 		const dataPathAttribute = target.attributes.getNamedItem("data-path")
@@ -91,21 +112,28 @@ export class FolderNoteModule {
 
 		// Ctrl/Command+Click creates the index file, then opens it.
 		const openAfterCreate = event.ctrlKey || event.metaKey
-		if (openAfterCreate && !exists) {
-			if (await this.createIndexFile(indexFilePath, true)) {
-				await this.openIndexFile(indexFilePath)
+		if (openAfterCreate) {
+			if (!exists) {
+				if (await this.createIndexFile(indexFilePath, true)) {
+					event.preventDefault()
+					event.stopPropagation()
+					await this.openIndexFile(indexFilePath)
+				}
+				return
 			}
+			event.preventDefault()
+			event.stopPropagation()
+			await this.openIndexFile(indexFilePath)
 			return
 		}
 
-		// Create the File if it doesn't exist and open it
+		// Only open the index file if it exists; otherwise allow default collapse/expand.
 		if (!exists) {
-			if (await this.createIndexFile(indexFilePath)) {
-				await this.openIndexFile(indexFilePath)
-			}
-		} else {
-			await this.openIndexFile(indexFilePath)
+			return
 		}
+		event.preventDefault()
+		event.stopPropagation()
+		await this.openIndexFile(indexFilePath)
 	}
 
 	private doesFileExist(path: string) {
