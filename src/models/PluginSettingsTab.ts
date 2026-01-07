@@ -15,7 +15,6 @@ export enum SortBy {
 }
 
 export interface PluginSetting {
-	graphOverwrite: boolean;
 	//skipFirstHeadline: boolean;
 	disableHeadlines: boolean;
 	rootIndexFile: string;
@@ -44,7 +43,6 @@ export interface PluginSetting {
 export const DEFAULT_SETTINGS: PluginSetting = {
 	//skipFirstHeadline: false,
 	disableHeadlines: false,
-	graphOverwrite: false,
 	rootIndexFile: "Dashboard.md",
 	autoCreateIndexFile: true,
 	autoRenameIndexFile: true,
@@ -80,16 +78,6 @@ export class PluginSettingsTab extends PluginSettingTab {
 		const {containerEl} = this;
 
 		containerEl.empty();
-
-		containerEl.createEl('h2', {text: 'Graph Settings'});
-		new Setting(containerEl)
-			.setName("Overwrite Graph View")
-			.setDesc("This will overwrite the default graph view and link files based on their index as well as their normal links")
-			.addToggle(component => component.setValue(this.plugin.settings.graphOverwrite)
-				.onChange(async (value) => {
-					this.plugin.settings.graphOverwrite = value
-					await this.plugin.saveSettings()
-				}))
 
 		containerEl.createEl('h2', {text: 'Index File Settings'});
 

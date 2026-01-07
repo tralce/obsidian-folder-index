@@ -1,6 +1,5 @@
 import {App, Plugin, PluginManifest} from 'obsidian';
 import {IndexContentProcessorModule} from "./modules/IndexContentProcessorModule";
-import {GraphManipulatorModule} from "./modules/GraphManipulatorModule";
 import {DEFAULT_SETTINGS, PluginSetting, PluginSettingsTab} from "./models/PluginSettingsTab";
 import {FolderNoteModule} from "./modules/FolderNoteModule";
 import {ContextMenuModule} from "./modules/ContextMenuModule";
@@ -11,12 +10,9 @@ export default class FolderIndexPlugin extends Plugin {
 	// @ts-ignore
 	settings: PluginSetting;
 	// @ts-ignore
-	graphManipulator: GraphManipulatorModule | null;
-	// @ts-ignore
 	folderNodeModule: FolderNoteModule;
 	// @ts-ignore
 	eventManager: EventEmitter
-	oldGraphSetting = false
 	static PLUGIN: FolderIndexPlugin;
 	// @ts-ignore
 	private contextMenuModule: ContextMenuModule;
@@ -37,7 +33,6 @@ export default class FolderIndexPlugin extends Plugin {
 		this.settings.hideIndexFiles = false;
 		await this.saveSettings();
 
-		this.oldGraphSetting = this.settings.graphOverwrite;
 		this.addSettingTab(new PluginSettingsTab(this.app, this));
 
 		this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this))
@@ -49,24 +44,12 @@ export default class FolderIndexPlugin extends Plugin {
 		})
 
 		this.folderNodeModule = new FolderNoteModule(this.app, this)
-		if (this.settings.graphOverwrite) {
-			this.graphManipulator = new GraphManipulatorModule(this.app, this)
-		}
 
 		this.contextMenuModule = new ContextMenuModule(this.app, this);
 		this.contextMenuModule.addFolderContextMenu();
 	}
 
 	onSettingsUpdate() {
-		if (this.settings.graphOverwrite != this.oldGraphSetting) {
-			if (this.settings.graphOverwrite) {
-				this.graphManipulator = new GraphManipulatorModule(this.app, this)
-			} else {
-				if (this.graphManipulator)
-					this.graphManipulator.unload()
-			}
-			this.oldGraphSetting = this.settings.graphOverwrite
-		}
 	}
 
 	onLayoutChange() {
@@ -81,9 +64,6 @@ export default class FolderIndexPlugin extends Plugin {
 		// eslint-disable-next-line no-console
 		console.log("Unloading FolderTableContent")
 		this.eventManager.removeAllListeners()
-		if (this.graphManipulator != null) {
-			this.graphManipulator.unload()
-		}
 		this.folderNodeModule.unload()
 	}
 

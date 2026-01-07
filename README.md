@@ -12,7 +12,6 @@
 - Automatic linking of files in the folder
 - Alphabetic sorting of files
 - Alphabetic sorting of headings
-- Rewritten Graph View to show the folder structure, and link them accordingly
 - Support for [File Tree Alternative Plugin](https://github.com/ozntel/file-tree-alternative) (I highly recommend this
   plugin)
 
@@ -24,7 +23,6 @@ the settings and toggle the features you like)
 
 From now on you should be able to use folders like they are a normal note!
 
-Folders will also be added to the Graph View by default and link all files that are contained within it :D
 
 #### Manual Indexing
 
