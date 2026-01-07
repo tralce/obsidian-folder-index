@@ -1,9 +1,4 @@
-import {TFile} from "obsidian";
 import FolderIndexPlugin from "../main";
-
-export function isIndexFileWithFile(file: TFile) {
-	return isIndexFile(file.path)
-}
 
 export function isIndexFile(path: string) {
 	if (isExcludedPath(path))
