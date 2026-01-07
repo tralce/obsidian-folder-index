@@ -89,9 +89,12 @@ export class FolderNoteModule {
 
 		const exists = this.doesFileExist(indexFilePath)
 
-		// Ctrl+Click creates the index file without opening it (mirrors context menu).
-		if (event.ctrlKey && !exists) {
-			await this.createIndexFile(indexFilePath)
+		// Ctrl/Command+Click creates the index file, then opens it.
+		const openAfterCreate = event.ctrlKey || event.metaKey
+		if (openAfterCreate && !exists) {
+			if (await this.createIndexFile(indexFilePath)) {
+				await this.openIndexFile(indexFilePath)
+			}
 			return
 		}
 
