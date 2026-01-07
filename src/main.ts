@@ -29,10 +29,6 @@ export default class FolderIndexPlugin extends Plugin {
 
 		await this.loadSettings();
 
-		//TODO: Remove once fixed
-		this.settings.hideIndexFiles = false;
-		await this.saveSettings();
-
 		this.addSettingTab(new PluginSettingsTab(this.app, this));
 
 		this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this))
@@ -76,4 +72,3 @@ export default class FolderIndexPlugin extends Plugin {
 		this.eventManager.emit("settingsUpdate", this.settings);
 	}
 }
-

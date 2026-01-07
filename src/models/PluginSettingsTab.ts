@@ -22,7 +22,6 @@ export interface PluginSetting {
 	includeFileContent: boolean,
 	autoCreateIndexFile: boolean;
 	autoRenameIndexFile: boolean;
-	hideIndexFiles: boolean;
 	autoPreviewMode: boolean;
 	sortIndexFiles: SortBy;
 	sortHeaders: SortBy;
@@ -47,7 +46,6 @@ export const DEFAULT_SETTINGS: PluginSetting = {
 	autoCreateIndexFile: true,
 	autoRenameIndexFile: true,
 	includeFileContent: false,
-	hideIndexFiles: false,
 	indexFileInitText: "---\ntags: MOCs\n---\n```folder-index-content\n```",
 	autoPreviewMode: false,
 	sortIndexFiles: SortBy.Alphabetically,
@@ -181,17 +179,6 @@ export class PluginSettingsTab extends PluginSettingTab {
 					this.plugin.settings.indexFilename = value
 					await this.plugin.saveSettings()
 				}))
-
-		new Setting(containerEl)
-			.setName("Hide IndexFile")
-			.setDesc("This will hide IndexFiles from the file explorer (Disabled as it causes bugs right now)")
-			.addToggle(component => component.setValue(this.plugin.settings.hideIndexFiles)
-				.onChange(async (value) => {
-					this.plugin.settings.hideIndexFiles = value
-					await this.plugin.saveSettings()
-				})
-				.setDisabled(true)
-			)
 
 		containerEl.createEl('h2', {text: 'Content Renderer Settings'});
 
