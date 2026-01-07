@@ -5,6 +5,7 @@ import {MarkdownTextRenderer} from "../types/MarkdownTextRenderer";
 
 export class IndexContentProcessorModule extends MarkdownRenderChild {
 	private readonly blockSource: string;
+	private readonly settingsUpdateHandler: () => void;
 
 	constructor(
 		private readonly app: App,
@@ -19,11 +20,12 @@ export class IndexContentProcessorModule extends MarkdownRenderChild {
 		this.filePath = filePath
 		this.container = container
 		this.blockSource = blockSource
+		this.settingsUpdateHandler = this.onSettingsUpdate.bind(this)
 	}
 
 	async onload() {
 		await this.render()
-		this.plugin.eventManager.on("settingsUpdate", this.triggerRerender.bind(this));
+		this.plugin.eventManager.on("settingsUpdate", this.settingsUpdateHandler);
 		this.plugin.registerEvent(this.app.vault.on("rename", this.triggerRerender.bind(this)))
 		this.app.workspace.onLayoutReady(() => {
 			this.plugin.registerEvent(this.app.vault.on("create", this.triggerRerender.bind(this)))
@@ -33,7 +35,7 @@ export class IndexContentProcessorModule extends MarkdownRenderChild {
 
 
 	async onunload() {
-		this.plugin.eventManager.off("settingsUpdate", this.onSettingsUpdate.bind(this))
+		this.plugin.eventManager.off("settingsUpdate", this.settingsUpdateHandler)
 	}
 
 	public onSettingsUpdate() {

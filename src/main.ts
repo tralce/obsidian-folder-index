@@ -7,15 +7,11 @@ import CustomEventTarget from "./modules/CustomEventTarget";
 
 // Remember to rename these classes and interfaces!
 export default class FolderIndexPlugin extends Plugin {
-	// @ts-ignore
-	settings: PluginSetting;
-	// @ts-ignore
-	folderNodeModule: FolderNoteModule;
-	// @ts-ignore
-	eventManager: EventEmitter
+	settings!: PluginSetting;
+	folderNodeModule!: FolderNoteModule;
+	eventManager!: CustomEventTarget;
 	static PLUGIN: FolderIndexPlugin;
-	// @ts-ignore
-	private contextMenuModule: ContextMenuModule;
+	private contextMenuModule!: ContextMenuModule;
 
 	constructor(app: App, manifest: PluginManifest) {
 		super(app, manifest);
@@ -33,7 +29,6 @@ export default class FolderIndexPlugin extends Plugin {
 
 		this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this))
 		this.registerEvent(this.app.workspace.on("layout-change", this.onLayoutChange.bind(this)))
-		this.eventManager.on("settingsUpdate", this.onSettingsUpdate.bind(this))
 
 		this.registerMarkdownCodeBlockProcessor("folder-index-content", (source, el, ctx) => {
 			ctx.addChild(new IndexContentProcessorModule(this.app, this, ctx.sourcePath, el, source))
@@ -43,9 +38,6 @@ export default class FolderIndexPlugin extends Plugin {
 
 		this.contextMenuModule = new ContextMenuModule(this.app, this);
 		this.contextMenuModule.addFolderContextMenu();
-	}
-
-	onSettingsUpdate() {
 	}
 
 	onLayoutChange() {

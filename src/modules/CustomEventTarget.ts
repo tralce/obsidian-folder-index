@@ -8,13 +8,11 @@ export default class CustomEventTarget extends EventTarget {
 	}
 
 	on<T = any>(eventName: string, callback: (event: CustomEvent<T>) => void): void {
-		// @ts-ignore
-		this.addEventListener(eventName, callback);
+		this.addEventListener(eventName, callback as EventListener);
 
 		// Track the listener in our map
 		const listeners = this.listenersMap.get(eventName) || [];
-		// @ts-ignore
-		listeners.push(callback);
+		listeners.push(callback as EventListener);
 		this.listenersMap.set(eventName, listeners);
 	}
 
@@ -32,11 +30,9 @@ export default class CustomEventTarget extends EventTarget {
 		const listeners = this.listenersMap.get(eventName);
 		// remove the listener we set to "off"
 		if (listeners) {
-			// @ts-ignore
-			const listenerIndex = listeners.indexOf(callback);
+			const listenerIndex = listeners.indexOf(callback as EventListener);
 			if (listenerIndex !== -1) {
-				// @ts-ignore
-				this.removeEventListener(eventName, callback);
+				this.removeEventListener(eventName, callback as EventListener);
 
 				listeners.splice(listenerIndex, 1);
 				this.listenersMap.set(eventName, listeners);

@@ -25,8 +25,6 @@ export class FolderNoteModule {
 	}
 
 	unload() {
-		// this.plugin.eventManager.off("fileExplorerFolderClick", this.onFolderClick.bind(this))
-		// FolderNoteModule.showAllIndexFiles()
 	}
 
 
@@ -181,7 +179,6 @@ export class FolderNoteModule {
 		const currentState = currentLeaf.getViewState();
 
 		try {
-			// try {
 			if (this.previousState == null) {
 				this.previousState = currentLeaf.getViewState();
 			}
