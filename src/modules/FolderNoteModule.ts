@@ -92,7 +92,7 @@ export class FolderNoteModule {
 		// Ctrl/Command+Click creates the index file, then opens it.
 		const openAfterCreate = event.ctrlKey || event.metaKey
 		if (openAfterCreate && !exists) {
-			if (await this.createIndexFile(indexFilePath)) {
+			if (await this.createIndexFile(indexFilePath, true)) {
 				await this.openIndexFile(indexFilePath)
 			}
 			return
@@ -123,10 +123,10 @@ export class FolderNoteModule {
 		}
 	}
 
-	private async createIndexFile(path: string) {
+	private async createIndexFile(path: string, forceCreate = false) {
 		if (isExcludedPath(path))
 			return false
-		if (this.plugin.settings.autoCreateIndexFile) {
+		if (forceCreate || this.plugin.settings.autoCreateIndexFile) {
 			const name = path.split(/\//).last()
 			try {
 				if (!name)

@@ -2,11 +2,17 @@ import {App, Notice, TFolder} from "obsidian";
 import FolderIndexPlugin from "../main";
 
 export class ContextMenuModule {
+	private isRegistered = false;
+
 	constructor(private app: App, private plugin: FolderIndexPlugin) {
 	}
 
 	addFolderContextMenu() {
-		this.app.workspace.on("file-menu", (menu, folder) => {
+		if (this.isRegistered) {
+			return;
+		}
+		this.isRegistered = true;
+		this.plugin.registerEvent(this.app.workspace.on("file-menu", (menu, folder) => {
 			if (folder instanceof TFolder) {
 				const indexFileForFolder = this.getIndexFileForFolder(folder.path)
 
@@ -18,7 +24,7 @@ export class ContextMenuModule {
 					});
 				}
 			}
-		});
+		}));
 	}
 
 	private doesIndexFileExistForFolder(fullPath: string): boolean {
