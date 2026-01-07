@@ -30,6 +30,7 @@ export interface PluginSetting {
 	recursiveIndexFiles: boolean;
 	renderFolderBold: boolean;
 	renderFolderItalic: boolean;
+	renderFolderArrow: boolean;
 	useBulletPoints: boolean;
 	excludeFolders: string[];
 	excludePatterns: string[];
@@ -56,6 +57,7 @@ export const DEFAULT_SETTINGS: PluginSetting = {
 	recursiveIndexFiles: false,
 	renderFolderBold: true,
 	renderFolderItalic: false,
+	renderFolderArrow: false,
 	useBulletPoints: false,
 	excludeFolders: [],
 	excludePatterns: [],
@@ -352,6 +354,15 @@ export class PluginSettingsTab extends PluginSettingTab {
 			.addToggle(component => component.setValue(this.plugin.settings.renderFolderItalic)
 				.onChange(async (value) => {
 					this.plugin.settings.renderFolderItalic = value
+					await this.plugin.saveSettings()
+				}))
+
+		new Setting(containerEl)
+			.setName("Append ⤦ to Folder Names")
+			.setDesc("This will append a ⤦ symbol after folder names")
+			.addToggle(component => component.setValue(this.plugin.settings.renderFolderArrow)
+				.onChange(async (value) => {
+					this.plugin.settings.renderFolderArrow = value
 					await this.plugin.saveSettings()
 				}))
 

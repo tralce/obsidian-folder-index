@@ -2,3 +2,7 @@
 div.hide-index-folder-note {
 	display: none;
 }
+
+.oz-folder-bold {
+	font-weight: bold;
+}

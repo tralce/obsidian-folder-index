@@ -106,11 +106,14 @@ export class MarkdownTextRenderer {
 		const symbol = settings.useBulletPoints ? "-" : "1."
 		let link = `${indentText}${symbol} ${settings.includeFileContent ? "!" : ""}`
 		if (isFolder) {
-			if (settings.renderFolderItalic) {
-				name = `*${name}*`
+			if (settings.renderFolderArrow) {
+				name = `${name} ⤦`
 			}
 			if (settings.renderFolderBold) {
-				name = `**${name}**`
+				name = `<span class="oz-folder-bold">${name}</span>`
+			}
+			if (settings.renderFolderItalic) {
+				name = `*${name}*`
 			}
 		}
 
